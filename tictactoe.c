@@ -11,10 +11,12 @@ int board[3][3] = {
     {0 ,0 ,0}
 };
 
-struct counter myCounter;
-int playerTurn = 1;
 int i, j;
+struct counter myCounter;
+int playerTurn = 0;
 _Bool gameOver = 0;
+_Bool winCondition = 0;
+int streak = 0;
 
 struct counter chooseCounterPosition() {
     int row = -1;
@@ -80,11 +82,29 @@ _Bool checkGameOver() {
     return 1;
 }
 
+_Bool checkWinCondition(playerTurn, i, j, streak) {
+    
+    if (i > 2 || j > 2) {
+        if (streak == 3) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    else if (board[i][j] == playerTurn) {
+        return (checkWinCondition(playerTurn, i + 1, j, streak + 1) || checkWinCondition(playerTurn, i , j + 1, streak + 1) || checkWinCondition(playerTurn, i + 1, j + 1, streak + 1));
+    }
+
+    else {
+        return (checkWinCondition(playerTurn, i + 1, j, 0) || checkWinCondition(playerTurn, i , j + 1, 0) || checkWinCondition(playerTurn, i + 1, j + 1, 0));
+    }
+
+}
+
 int main() {
-    while (!gameOver){
-        printBoard(playerTurn);
-        myCounter = chooseCounterPosition();
-        placeCounter(playerTurn, myCounter);
+    while (!gameOver && !winCondition) {
 
         if (playerTurn == 1) {
             playerTurn = 2;
@@ -94,9 +114,18 @@ int main() {
             playerTurn = 1;
         }
 
+        printBoard(playerTurn);
+        myCounter = chooseCounterPosition();
+        placeCounter(playerTurn, myCounter);
+
         gameOver = checkGameOver();
+        winCondition = checkWinCondition(playerTurn, 0, 0, 0);
+
     }
 
+    if (winCondition) {
+        printf("Player %i wins!\n", playerTurn);
+    }
     printf("Game Over!\n");
 
     return 0;
