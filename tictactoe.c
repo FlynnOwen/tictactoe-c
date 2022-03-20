@@ -19,6 +19,7 @@ _Bool winCondition = 0;
 int streak = 0;
 
 struct counter chooseCounterPosition() {
+    // Asks user where on the board they would like to place a counter
     int row = -1;
     int column = -1;
 
@@ -51,6 +52,7 @@ struct counter chooseCounterPosition() {
 }
 
 void placeCounter(int playerTurn, struct counter myCounter) {
+    // Places chosen counter on the board
     if (playerTurn == 1) {
         board[myCounter.row][myCounter.column] = 1;
     }
@@ -61,6 +63,7 @@ void placeCounter(int playerTurn, struct counter myCounter) {
 }
 
 void printBoard(playerTurn) {
+    // Prints the current state of the board and the current players turn
     for (i=0; i < 3; i++){
         for(j=0; j<3; j++){
             printf("%i ", board[i][j]);
@@ -72,6 +75,7 @@ void printBoard(playerTurn) {
 }
 
 _Bool checkGameOver() {
+    // Checks whether all possible moves have been made
     for (i=0; i < 3; i++){
         for(j=0; j<3; j++){
             if (board[i][j] == 0) {
@@ -83,7 +87,8 @@ _Bool checkGameOver() {
 }
 
 _Bool checkWinCondition(playerTurn, i, j, streak) {
-    
+    // Checks whether a player has 3 counters in a row
+    // Currently uses a recursive (unoptimized) version. Add in memoization to make it a dynamic programming approach
     if (i > 2 || j > 2) {
         if (streak == 3) {
             return 1;
