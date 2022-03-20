@@ -17,6 +17,7 @@ int playerTurn = 0;
 _Bool gameOver = 0;
 _Bool winCondition = 0;
 int streak = 0;
+char direction;
 
 struct counter chooseCounterPosition() {
     // Asks user where on the board they would like to place a counter
@@ -86,7 +87,7 @@ _Bool checkGameOver() {
     return 1;
 }
 
-_Bool checkWinCondition(playerTurn, i, j, streak) {
+_Bool checkWinCondition(playerTurn, i, j, streak, direction) {
     // Checks whether a player has 3 counters in a row
     // Currently uses a recursive (unoptimized) version. Add in memoization to make it a dynamic programming approach
     if (i > 2 || j > 2) {
@@ -99,11 +100,22 @@ _Bool checkWinCondition(playerTurn, i, j, streak) {
     }
 
     else if (board[i][j] == playerTurn) {
-        return (checkWinCondition(playerTurn, i + 1, j, streak + 1) || checkWinCondition(playerTurn, i , j + 1, streak + 1) || checkWinCondition(playerTurn, i + 1, j + 1, streak + 1));
+        if (direction == 'a') {
+            return (checkWinCondition(playerTurn, i + 1, j, streak + 1, 'd') || checkWinCondition(playerTurn, i , j + 1, streak + 1, 'r') || checkWinCondition(playerTurn, i + 1, j + 1, streak + 1, 'x'));
+        }
+        else if (direction == 'd') {
+            return checkWinCondition(playerTurn, i + 1, j, streak + 1, 'd');
+        }
+        else if (direction == 'r') {
+            return checkWinCondition(playerTurn, i, j + 1, streak + 1, 'r');
+        }
+        else {
+            return checkWinCondition(playerTurn, i + 1, j + 1, streak + 1, 'x');
+        }
     }
 
     else {
-        return (checkWinCondition(playerTurn, i + 1, j, 0) || checkWinCondition(playerTurn, i , j + 1, 0) || checkWinCondition(playerTurn, i + 1, j + 1, 0));
+        return (checkWinCondition(playerTurn, i + 1, j, 0, 'a') || checkWinCondition(playerTurn, i , j + 1, 0, 'a') || checkWinCondition(playerTurn, i + 1, j + 1, 0, 'a'));
     }
 
 }
@@ -124,7 +136,7 @@ int main() {
         placeCounter(playerTurn, myCounter);
 
         gameOver = checkGameOver();
-        winCondition = checkWinCondition(playerTurn, 0, 0, 0);
+        winCondition = checkWinCondition(playerTurn, 0, 0, 0, 'a');
 
     }
 
